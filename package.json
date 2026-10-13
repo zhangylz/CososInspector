@@ -38,11 +38,12 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
-    "jszip": "^3.10.1"
+    "jszip": "^3.10.1",
+    "ws": "^8.21.3"
   },
   "devDependencies": {
-    "sharp": "^0.34.2",
     "esbuild": "^0.25.0",
+    "sharp": "^0.34.2",
     "typescript": "^5.0.0"
   }
 }

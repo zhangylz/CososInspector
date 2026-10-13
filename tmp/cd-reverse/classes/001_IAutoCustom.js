@@ -1,0 +1,1 @@
+cclegacy._RF.push({},"f47cf2FmjJEgYV+w35vGXKa","IAutoCustom",void 0);var{ccclass:ccclass,property:property}=_decorator,IAutoCustom=(_dec=ccclass("IAutoCustom"),_dec(_class=class extends Component{})||_class),_dec$1,_dec2,_dec3,_class$1,_class2,_descriptor,_descriptor2;cclegacy._RF.pop(),

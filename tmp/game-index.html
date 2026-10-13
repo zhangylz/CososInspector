@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset='utf-8'>
+  <!--http://www.html5rocks.com/en/mobile/mobifying/-->
+  <meta name='viewport'
+    content='viewport-fit=cover,width=device-width,user-scalable=no,initial-scale=1,minimum-scale=1,maximum-scale=1,minimal-ui=true' />
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-MTXM3DWCZJ"></script>
+  <script> window.dataLayer = window.dataLayer || []; function gtag(){dataLayer.push(arguments);} gtag('js', new Date()); gtag('config', 'G-MTXM3DWCZJ'); </script>
+  
+  <script>
+    // 建立記錄時間的物件
+    const pageLoadTiming = {
+        logs: {},
+        
+        // 記錄時間點
+        logTime(eventName) {
+            this.logs[eventName] = new Date();
+        },
+        
+        // 計算時間差（毫秒）
+        calculateDuration(no, startEvent, endEvent) {
+          if (isFirst && urlParams_get('demo') != 'true') {
+            if (!this.logs[startEvent] || !this.logs[endEvent]) {
+                  return 'no Record';
+            }
+            let value = this.logs[endEvent] - this.logs[startEvent];
+
+            const report = 'https://' + urlParams_get('domain_platform').split('').reverse().join('') + '/webservice/event/loading';
+            const params = '?EventNo=' + no + '&EventValue=' + value + '&AccountID=-1&GameVersion=-1' + '&SSOKey=' + urlParams_get('ssoKey') + '&ApiID=' + urlParams_get('apiId') + '&GameID=748';
+            let xhr = new XMLHttpRequest();
+            xhr.open('get', report + params);
+            xhr.send();
+          }
+        }
+    };
+
+    // 記錄 head 開始時間
+    pageLoadTiming.logTime('headStartTime');
+
+    const queryString = window.location.search;
+    const urlParams = new URLSearchParams(queryString);
+    const urlParams_get = function (name) {
+      return urlParams.get(name) || '';
+    }
+
+    let isFirst = true;
+    // 檢查 localStorage 是否可用
+    try {
+      const isSaved = localStorage.getItem('indexFirstLog');
+      if (isSaved) {
+        isFirst = false;
+      } else {
+        localStorage.setItem('indexFirstLog', '1');
+      }
+    } catch (e) {
+      isFirst = false;
+    }
+
+    // 計算時間差
+    function getTimeDiff(start, end) {
+        return end - start;
+    }
+
+    function sendUserEventLog(no) {
+      if (urlParams_get('demo') != 'true') {
+        const report = 'https://' + urlParams_get('domain_platform').split('').reverse().join('') + '/webservice/event/user';
+        const params = '?UserID=-1&GameID=748&GameVersion=-1&EventNo=' + no + '&EventValue=' + urlParams_get('ssoKey') + '&BrowserSystem=-1&DeviceSystem=-1&CreateTime=' + new Date();
+        let xhr = new XMLHttpRequest();
+        xhr.open('get', report + params);
+        xhr.send();
+      }
+    }
+
+    function sendEventLog(no) {
+      if (urlParams_get('demo') != 'true') {
+        const report = 'https://' + urlParams_get('domain_platform').split('').reverse().join('') + '/webservice/event/trigger';
+        const params = '?EventID=' + no + '&GameVersion=-1&EventStatus=0&BrowserSystem=-1&DeviceSystem=-1&AccountID=-1&ApiId=' + urlParams_get('apiId') + '&SSOKey=' + urlParams_get('ssoKey') + '&GameID=748&CreateTime=' + new Date();
+        let xhr = new XMLHttpRequest();
+        xhr.open('get', report + params);
+        xhr.send();
+      }
+    }
+
+    // 劫取 Error 事件，因為3.8.5的window.onerror接收不到cocos 生命週期內的錯誤
+    let errorTemp = console.error;
+    console.error = function(...args) {
+      // 過濾掉引擎層一些警告
+      let errorMsg = '';
+      errorMsg = args[0];
+      if (errorMsg.includes && (errorMsg.includes("please go to") || errorMsg.includes("same __cid__"))) return;
+
+      // 接回原本的錯誤處理
+      window.onerror?.(null, null, null, null, {stack: errorMsg})
+      errorTemp(...args);
+    };  
+
+    window.onload = function() {
+      // HTML 頁面載入完成時間點 Log
+      pageLoadTiming.logTime('log955');
+      pageLoadTiming.calculateDuration(955, 'headStartTime', 'log955');
+    };
+
+    // 轉址完成時間點 Log
+    sendEventLog(94)
+    // 記錄初始載入時間
+    pageLoadTiming.logTime('log940');
+  </script>
+  <!--https://developer.apple.com/library/safari/documentation/AppleApplications/Reference/SafariHTMLRef/Articles/MetaTags.html-->
+  <meta name='apple-mobile-web-app-capable' content='yes'>
+  <meta name='apple-mobile-web-app-status-bar-style' content='black-translucent'>
+  <meta name='format-detection' content='telephone=no'>
+
+  <!-- force webkit on 360 -->
+  <meta name='renderer' content='webkit' />
+  <meta name='force-rendering' content='webkit' />
+  <!-- force edge on IE -->
+  <meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1' />
+  <meta name='msapplication-tap-highlight' content='no'>
+
+  <!-- force full screen on some browser -->
+  <meta name='full-screen' content='yes' />
+
+  <link rel='stylesheet' type='text/css' href="style.02f4a.css" />
+  <link rel='icon' id='favicon' href='../favicon.ico' />
+</head>
+<body>
+  <div id='GameDiv' cc_exact_fit_screen='true'>
+    <div id='Cocos3dGameContainer'>
+      <canvas id='GameCanvas' oncontextmenu='event.preventDefault()' tabindex='99'></canvas>
+    </div>
+  </div>
+  <div id='LogoPage' style='position: absolute; width: 100%; height: 100%; background-color: black;'>
+    <div id='LogoDiv' style='position: absolute; left:50%; top:50%; transform: translate(-50%, -50%)'>
+      <picture id='LogoImage'>
+      <div id='LogoImageProgress1' style='position: absolute; width: 100%; top: 94%; height: 6%; border-radius: 10px;'>
+      </div>
+      <div id='LogoImageProgress2' style='position: absolute; width: 0%; top: 94%; height: 6%; border-radius: 10px;'>
+      </div>
+    </div>
+  </div>
+  <div id='IOSFullScreenHelper' style="height: 100vh; width: 0.01vh; display: inline; position: absolute; visibility: hidden;"></div>
+  <style>
+    @keyframes progress {
+      from {
+        width: 0%;
+      }
+
+      to {
+        width: 100%;
+      }
+    }
+
+    @media screen and (orientation: portrait) {
+      #LogoDiv {
+        height: 13.125vw;
+      }
+    }
+
+    @media screen and (orientation: landscape) {
+      #LogoDiv {
+        height: 13.125vh;
+      }
+    }
+  </style>
+  <script>
+    let myUrl = window.location.toString();
+    let ipFirst = /^http(s)?:\/\/([0-9]{1,3}\.){3}[0-9]{1,3}(:[0-9]+)?\/.*?$/;
+    let isDevEnv = myUrl.indexOf('localhost') != -1 || ipFirst.test(myUrl) == true;
+
+    if (isDevEnv == false) {
+      sendUserEventLog(21);
+      sendEventLog(95);
+
+      const logoImageProgress1 = document.getElementById('LogoImageProgress1');
+      const logoImageProgress2 = document.getElementById('LogoImageProgress2');
+      const skin = urlParams_get('skin');
+      const apiId = urlParams_get('apiId');
+      let type = '';
+
+      if (apiId == '20110') {
+        // 研四需求
+        type = 'VegasEmpire';
+      }
+      else if (skin != '') {
+        if (skin == '4') {
+          type = 'tada_casino';
+        } else if (skin == '1') {
+          type = 'tada';
+        } else {
+          type = 'jili';
+        }
+      }
+      else {
+        if (apiId == '301') {
+          type = 'tada_casino';
+        } else if (apiId == '3' || urlParams_get('tadaSkin') == '1') {
+          type = 'tada';
+        } else {
+          type = 'jili';
+        }
+      }
+
+      if(type == 'jili'){
+        const apiid = Number(apiId);
+        if(apiid >= 20000 && apiid < 30000){
+          type = 'jili_us';
+        } 
+      }
+
+      const setImage = function (name, onlyPng) {
+        const logoImage = document.getElementById('LogoImage');
+
+        var sc0 = document.createElement("source");
+        var sc1 = document.createElement("source");
+        var sc2 = document.createElement("source");
+        var img = document.createElement("img");
+
+        img.onload = function (event) {
+          // 黑頻結束時間點 Log
+          pageLoadTiming.logTime('log952');
+
+          // 延後送LOG時機
+          pageLoadTiming.calculateDuration(940, 'headStartTime', 'log940');
+          pageLoadTiming.calculateDuration(950, 'headStartTime', 'log950');
+          pageLoadTiming.calculateDuration(952, 'headStartTime', 'log952');
+        };
+
+        if(!onlyPng){
+          sc0.srcset = `../logo/${name}.mp4`;
+          sc0.type = "video/mp4";
+          sc1.srcset = `../logo/${name}.avif`;
+          sc1.type = "image/avif";
+          sc2.srcset = `../logo/${name}.webp`;
+          sc2.type = "image/webp";
+        }
+        img.src = `../logo/${name}.png`;
+        img.style = 'height: 83%';
+        
+
+        logoImage.appendChild(sc0);
+        logoImage.appendChild(sc1);
+        logoImage.appendChild(sc2);
+        logoImage.appendChild(img);
+      }
+
+      const jiliTitle = 'Chicken Dash10000';
+      const tadaTitle = 'Chicken Dash10000';
+      const favicon = document.getElementById('favicon');
+      
+      if (type == 'jili') {
+        document.title = jiliTitle;
+        favicon.href = '../logo/favicon_jili.ico';
+        setImage('jili_20231227');
+        logoImageProgress1.style.backgroundColor = 'rgb(45, 38, 28)';
+        logoImageProgress2.style.backgroundColor = 'rgb(219, 177, 76)';
+      }
+      else if (type == 'tada' || type == 'tada_casino') {
+        document.title = tadaTitle;
+        favicon.href = '../logo/favicon_tada.ico';
+
+        if (type == 'tada') {
+          setImage('tada_20221227')
+        } else {
+          setImage('tada_20230316')
+        }
+        logoImageProgress1.style.backgroundColor = 'rgb(35, 35, 35)';
+        logoImageProgress2.style.backgroundColor = 'rgb(255, 130, 0)';
+      }
+      else if(type == 'VegasEmpire'){
+        setImage('VegasEmpire', true);
+        document.title = tadaTitle;
+        favicon.href = '../logo/favicon_tada.ico';
+        logoImageProgress1.style.backgroundColor = 'rgb(45, 38, 28)';
+        logoImageProgress2.style.backgroundColor = 'rgb(219, 177, 76)';
+      }
+      else if(type == 'jili_us'){
+        setImage('jilius_20260223', true);
+        document.title = jiliTitle;
+        favicon.href = '../logo/favicon_jili.ico';
+        logoImageProgress1.style.backgroundColor = 'rgb(45, 38, 28)';
+        logoImageProgress2.style.backgroundColor = 'rgb(219, 177, 76)';
+      }
+
+      logoImageProgress2.style.animationName = 'progress';
+      logoImageProgress2.style.animationDuration = '2s';
+      logoImageProgress2.style.animationTimingFunction = 'ease-out';
+      logoImageProgress2.style.animationFillMode = 'forwards';
+
+      window.bootTimestamp = new Date();
+      window.logoTimer = Date.now();
+    }
+
+    if (isDevEnv == true) {
+      window.bootTimestamp = new Date();
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+      // HTML 分析完成時間點 Log
+      pageLoadTiming.logTime('log950');
+    });
+
+    // API 反向串接
+    // Client API script injection
+    if (urlParams_get("clientApiMode") == 1) {
+      // 1X2 Network
+      let s = document.createElement("script");
+      s.setAttribute("type", "text/javascript");
+      let jsUrl = "https://cdn.1x2networkhub.com/f1x2games/infrastr_generic-framework/clientAPI.game.min.js";
+      if (location.hostname.startsWith("uat")) {
+        jsUrl = "https://cdn-stage.1x2networkhub.com/f1x2games/infrastr_generic-framework/clientAPI.game.min.js";
+      }
+      s.setAttribute("src", jsUrl);
+      document.head.appendChild(s);
+    }
+    else if (urlParams_get("clientApiMode") == 3) {
+      // Relax
+      let s = document.createElement("script");
+      s.setAttribute("type", "text/javascript");
+      s.setAttribute("src", "https://cf-mt-cdn1.relaxg.com/casino/relaxlibs/feim/1.17.1/rlxfeim.min.js");
+      document.head.appendChild(s);
+    }
+
+    function Send(url, isPost, data) {
+      var headers = {
+        Accept: 'application/json, text/javascript, text/plain',
+      };
+      var xhr = new XMLHttpRequest();
+      var method = "GET";
+      if(isPost){
+        method = "post";
+      }
+      xhr.open(method, url, true);
+
+      if (headers) {
+        Object.keys(headers).forEach(key => xhr.setRequestHeader(key, headers[key]));
+      }
+
+      xhr.timeout = 5000;
+
+      xhr.onload = evt => { };
+
+      xhr.onerror = evt => { };
+
+      xhr.ontimeout = evt => { };
+      if(isPost){
+        xhr.setRequestHeader( 'Content-Type', 'application/json' );
+			  xhr.send( JSON.stringify( data ) );
+      }
+      else{
+        xhr.send();
+      }
+    }
+
+    window.SendJscramblerLog = ( type ) =>
+    {
+        let domain_platform = urlParams_get('domain_platform').split('').reverse().join('')
+        const url = new URL( window.location.href );
+        const log = {
+            Type: type,
+            GameId: Number( urlParams_get("gameID") ),
+            Version: "",
+            ClientDomain: url.host,
+            ParentDomain: ( top && top.location ) ? top.location.host : "",
+        };
+        Send(`https://${domain_platform}/webservice/event/jscrambler`, true, log);
+    };
+  </script>
+  
+
+<!-- Polyfills bundle. -->
+
+
+<!-- SystemJS support. -->
+<script src="src/system.bundle.543e6.js" charset="utf-8"> </script>
+
+<!-- Import map -->
+<script src="src/import-map.66dfc.json" type="systemjs-importmap" charset="utf-8"> </script>
+
+<script>
+    System.import('./index.8c283.js').catch(function(err) { console.error(err); })
+</script>
+
+</body>
+
+</html>

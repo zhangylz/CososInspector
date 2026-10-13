@@ -165,6 +165,24 @@ const preflightSaveScene = async (bridge, sceneUrl) => {
   );
 };
 
+/** save-scene 消息先返回、文件刷盘有延迟：轮询直到场景文件可完整解析 */
+const waitForSceneFileOnDisk = async (absPath, timeoutMs = 60_000) => {
+  const start = Date.now();
+  let lastErr = null;
+  while (Date.now() - start < timeoutMs) {
+    try {
+      JSON.parse(fs.readFileSync(absPath, 'utf8'));
+      return;
+    } catch (e) {
+      lastErr = e;
+    }
+    await new Promise((r) => setTimeout(r, 500));
+  }
+  throw new Error(
+    `场景文件等待超时（${timeoutMs}ms）仍不可解析: ${absPath} :: ${lastErr?.message ?? ''}`
+  );
+};
+
 /** 绑定 Sprite 前重置 .meta，避免「Rect exceeds maximum margin」 */
 const prepareTextureMetaForScene = async (project, manifest, bridge, assetKey) => {
   const entries = Object.values(manifest ?? {});
@@ -185,7 +203,8 @@ for (const u of urls) {
 }
 await new Promise((r) => setTimeout(r, 1200));
 return { refreshed: urls.length };`,
-    120_000
+    // 208+ 个重置过的 .meta 会触发真实重导入，2 分钟不够
+    600_000
   );
   metaReset = resetAllSpriteMetaFromManifest(project, manifest);
   return metaReset;
@@ -920,7 +939,7 @@ function parseSpineFromNode(ch) {
 
 function lookupManifestEntry(manifest, nodeId, index = 0) {
   return (
-    manifest[`${nodeId}#${index}`] ??
+    manifest[nodeId + '#' + index] ??
     (index === 0 ? manifest[nodeId] : null) ??
     null
   );
@@ -1522,6 +1541,7 @@ const main = async () => {
   let diskPatch = null;
   if (args.withTextures && Object.keys(textureResult.manifest).length) {
     console.error('[scene-to-creator] 磁盘补丁 SpriteFrame + UITransform + Mask…');
+    await waitForSceneFileOnDisk(disk.abs);
     const pathMap = buildPathToNodeUuidMap(disk.abs);
     const snapById = indexSnapshotNodes(snapshot.root);
     let bindings =
@@ -1548,6 +1568,7 @@ const main = async () => {
     console.error('[scene-to-creator] 磁盘补丁完成。请关闭场景(不保存)后重新打开');
     diskPatch = { bindings: bindings.length, sfPatch, uiPatch, maskPatch, camPatch, metaReset };
   } else {
+    await waitForSceneFileOnDisk(disk.abs);
     const pathMap = buildPathToNodeUuidMap(disk.abs);
     const maskTargets = collectMaskTargets(snapshot.root, pathMap);
     if (maskTargets.length) {

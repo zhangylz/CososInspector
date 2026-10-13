@@ -90,3 +90,9 @@ npm run watch
 ## 许可证
 
 MIT License
+
+
+## 本地使用 trae ide 编辑器 进行处理
+npm run cocos-bridge -- --domain play.godeebxp.com --page-url-match godeebxp
+
+用 cocos_dump_runtime （ fetchUrls=true ，实现 runtimeDump.ts ）：
